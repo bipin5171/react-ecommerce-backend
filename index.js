@@ -20,6 +20,7 @@ const cartRouter = require('./routes/Cart');
 const ordersRouter = require('./routes/Order');
 const { User } = require('./model/User');
 const { isAuth, sanitizeUser, cookieExtractor } = require('./services/common');
+const path = require('path');
 
 const SECRET_KEY = 'SECRET_KEY';
 // JWT options
@@ -31,7 +32,7 @@ opts.secretOrKey = SECRET_KEY; // TODO: should not be in code;
 
 //middlewares
 
-server.use(express.static('build'))
+
 server.use(cookieParser());
 server.use(
   session({
@@ -47,6 +48,10 @@ server.use(
   })
 );
 server.use(express.json()); // to parse req.body
+
+
+server.use(express.static(path.join(__dirname,'./build')))
+
 server.use('/products', isAuth(), productsRouter.router);
 // we can also use JWT token for client-only auth
 server.use('/categories', isAuth(), categoriesRouter.router);
@@ -55,6 +60,11 @@ server.use('/users', isAuth(), usersRouter.router);
 server.use('/auth', authRouter.router);
 server.use('/cart', isAuth(), cartRouter.router);
 server.use('/orders', isAuth(), ordersRouter.router);
+
+
+server.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './build', 'index.html'));
+});
 
 // Passport Strategies
 passport.use(
@@ -80,7 +90,7 @@ passport.use(
             return done(null, false, { message: 'invalid credentials' });
           }
           const token = jwt.sign(sanitizeUser(user), SECRET_KEY);
-          done(null, {token}); // this lines sends to serializer
+          done(null, {id:user.id, role:user.role, token}); // this lines sends to serializer
         }
       );
     } catch (err) {
@@ -136,4 +146,4 @@ async function main() {
 
 server.listen(8080, () => {
   console.log('server started');
-});
+}); 
