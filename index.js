@@ -44,11 +44,12 @@ server.use(
   })
 );
 server.use(passport.authenticate('session'));
-server.use(
-  cors({
-    exposedHeaders: ['X-Total-Count'],
-  })
-);
+// CORS configuration to allow all origins
+server.use(cors({
+  origin: '*',
+  exposedHeaders: ['X-Total-Count'],
+  credentials: true
+}));
 server.use(express.json()); // to parse req.body
 
 
