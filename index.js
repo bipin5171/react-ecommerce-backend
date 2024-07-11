@@ -22,7 +22,9 @@ const { User } = require('./model/User');
 const { isAuth, sanitizeUser, cookieExtractor } = require('./services/common');
 const path = require('path');
 
-const SECRET_KEY = 'SECRET_KEY';
+require('dotenv').config();
+
+const SECRET_KEY = process.env.SECRET_KEY;
 // JWT options
 
 
@@ -61,6 +63,11 @@ server.use('/auth', authRouter.router);
 server.use('/cart', isAuth(), cartRouter.router);
 server.use('/orders', isAuth(), ordersRouter.router);
 
+//added
+
+server.use(express.static(path.join(__dirname, "./build")));
+
+//added
 
 server.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, './build', 'index.html'));
@@ -139,11 +146,13 @@ passport.deserializeUser(function (user, cb) {
 
 main().catch((err) => console.log(err));
 
+
+
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/ecommerce');
+  await mongoose.connect(process.env.Mongo_Url);
   console.log('database connected');
 }
 
-server.listen(8080, () => {
+server.listen(process.env.Port, () => {
   console.log('server started');
 }); 
