@@ -44,12 +44,35 @@ server.use(
   })
 );
 server.use(passport.authenticate('session'));
+
 // CORS configuration to allow all origins
 server.use(cors({
   origin: '*',
   exposedHeaders: ['X-Total-Count'],
   credentials: true
 }));
+
+
+// CORS configuration to allow requests from Vercel
+// const allowedOrigins = [
+//   'https://react-ecommerce-backend-geaosa3rp-bipin5171s-projects.vercel.app',
+//   'https://react-ecommerce-backend-six.vercel.app'
+// ];
+// server.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   exposedHeaders: ['X-Total-Count'],
+//   credentials: true
+// }));
+
+
+
+
 server.use(express.json()); // to parse req.body
 
 
